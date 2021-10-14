@@ -39,10 +39,10 @@ void parse_flags(int argc, char *argv[]) {
 }
 
 int main(int argc, char *argv[]) {
-    if(argv[1] == NULL) {
-        std :: cout << "pass some arguments: \"s03-echo a b 34 c55\"\n";
-        return 0;
-    }
+	if(argv[1] == NULL) {
+		std :: cout << "pass some arguments: \"s03-echo a b 34 c55\"\n";
+		return 0;
+	}
 	parse_flags(argc, argv);
 	if(is_descending) {
 		for(int i = argc - 1; i >= 1 + flags_amount; i--) {
