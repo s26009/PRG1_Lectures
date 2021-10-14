@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <cstring>
 
 //( x != 0 ? 5 / x : 0 )
 
@@ -26,8 +27,8 @@ void apply_flag(char flag) {
 }
 
 bool is_flag(char* argument) {
-	std::cout << "is_flag: " << argument << "\n";
-	return argument[0] == '-';
+	std::cout << "is_flag: "  << argument << "\n";
+	return argument[0] == '-' && strlen(argument) == 2;
 }
 
 void parse_flags(int argc, char *argv[]) {
@@ -36,6 +37,8 @@ void parse_flags(int argc, char *argv[]) {
 		if(is_flag(argv[i])) {
 			flags_amount++;
 			apply_flag(argv[i][1]);
+		} else {
+			break;
 		}
 	}
 }
