@@ -139,9 +139,7 @@ int main() {
 		<< time2.count_minutes() << "\n";
 		
 	std::cout << time2.to_string() << " -> time_to_midnight() = " 
-		<< time2.time_to_midnight() << "\n";
-
-	
+		<< time2.time_to_midnight() << "\n";	
 	
     return 0;
 }
