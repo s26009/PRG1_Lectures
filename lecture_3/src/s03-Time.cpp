@@ -86,6 +86,18 @@ bool Time::operator!=(Time time2) {
 	return seconds != time2.seconds;
 }
 
+uint64_t Time::count_seconds() {
+	return seconds;
+}
+
+uint64_t Time::count_minutes() {
+	return seconds / 60;
+}
+
+Time Time::time_to_midnight() {
+	return Time(86400 - seconds);
+}
+
 int main() {
     Time time1 = Time(19, 234, 359);
     Time time2 = Time(15, 50, 15);
@@ -118,6 +130,18 @@ int main() {
 		
 	std::cout << time1.to_string() << " != " << time2.to_string() <<
 	" = " << (time1 != time2) << "\n";
+
+		
+	std::cout << time2.to_string() << " -> count_seconds() = " 
+		<< time2.count_seconds() << "\n";
+		
+	std::cout << time2.to_string() << " -> count_minutes() = " 
+		<< time2.count_minutes() << "\n";
+		
+	std::cout << time2.to_string() << " -> time_to_midnight() = " 
+		<< time2.time_to_midnight() << "\n";
+
+	
 	
     return 0;
 }

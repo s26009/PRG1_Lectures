@@ -25,4 +25,8 @@ struct Time {
 	bool operator> (Time);
 	bool operator== (Time);
 	bool operator!= (Time);
+
+	uint64_t count_seconds();
+	uint64_t count_minutes();
+	Time time_to_midnight();
 };
