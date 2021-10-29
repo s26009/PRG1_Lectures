@@ -1,75 +1,134 @@
+/*
+ * A reverse-polish notation calculator.
+ */
+
+#include <algorithm>
 #include <iostream>
+#include <iterator>
+#include <stack>
+#include <stdexcept>
 #include <string>
-#include <cstring>
+#include <vector>
 #include <cmath>
 
-bool is_number(const char* argument) {
-    for (int i=0; argument[i] != '\0'; i++) {
-        if (std::isdigit(argument[i]) == 0) return false;
+
+auto pop_top(std::stack<double>& stack) -> double
+{
+    if (stack.empty()) {
+        throw std::logic_error{"empty stack"};
     }
-    return true;
+    auto element = std::move(stack.top());
+    stack.pop();
+    return element;
 }
 
-bool is_operation(const char* argument) {
-	std::string const operations = "+-//**sqrt!%";
-	std::string const argument_str = std::string(argument);
-    return operations.find(argument_str) != std::string::npos;
+
+auto evaluate_addition(std::stack<double>& stack) -> void
+{
+    if (stack.size() < 2) {
+        throw std::logic_error{"not enough operands for +"};
+    }
+    auto const b = pop_top(stack);
+    auto const a = pop_top(stack);
+    stack.push(a + b);
 }
 
-void calculate_and_print(int first, int second, std::string operation) {
-	if(operation.length() < 2) {
-		switch(operation[0]) {
-			case '+':
-				std::cout << first  << " + " << second  << " = " << 
-					first + second << "\n";
-				break;
-			case '-':
-				std::cout << first  << " - " << second  << " = " << 
-					first - second << "\n";
-				break;
-			case '*':
-				std::cout << first  << " * " << second  << " = " << 
-					first * second << "\n";
-				break;
-			case '/':
-				std::cout << first  << " / " << second  << " = " << 
-					(float) first / (float) second << "\n";
-				break;
-			case '%':
-				std::cout << first  << " % " << second  << " = " << 
-					first % second << "\n";
-				break;
-			case '!':
-				int factorial;
-				if (first < 0) {
-        			std::cout << "There's no factorial of a negative number.";
-					break;
-				} else {
-					factorial = 1;
-					for(int i = 1; i <= first; ++i) {
-						factorial *= i;
-					}
-				}
-				std::cout << "!" << first  << " = " << factorial << "\n";
-				break;
-			default:
-				std::cout << "Unknown operation: " << operation << "\n";
-		}
-	} else {
-		if(operation == "//") {
-			std::cout << first  << " // " << second  << " = " << 
-				first / second << "\n";
-		} else if(operation == "**") {
-			std::cout << first  << " ** " << second  << " = " << 
-				pow(first, second) << "\n";
-		} else if(operation == "sqrt") {
-			std::cout << first  << "sqrt " << " = " << 
-				sqrt(first) << "\n";
+auto evaluate_subtraction(std::stack<double>& stack) -> void
+{
+    if (stack.size() < 2) {
+        throw std::logic_error{"not enough operands for -"};
+    }
+    auto const b = pop_top(stack);
+    auto const a = pop_top(stack);
+    stack.push(a - b);
+}
+
+auto evaluate_multiplication(std::stack<double>& stack) -> void
+{
+    if (stack.size() < 2) {
+        throw std::logic_error{"not enough operands for *"};
+    }
+    auto const b = pop_top(stack);
+    auto const a = pop_top(stack);
+    stack.push(a * b);
+}
+
+auto evaluate_division(std::stack<double>& stack) -> void
+{
+    if (stack.size() < 2) {
+        throw std::logic_error{"not enough operands for /"};
+    }
+    auto const b = pop_top(stack);
+    auto const a = pop_top(stack);
+    stack.push(a / b);
+}
+
+auto evaluate_division_whole(std::stack<double>& stack) -> void
+{
+    if (stack.size() < 2) {
+        throw std::logic_error{"not enough operands for //"};
+    }
+    auto const b = (int) pop_top(stack);
+    auto const a = (int) pop_top(stack);
+    stack.push(a / b);
+}
+
+auto evaluate_remainder(std::stack<double>& stack) -> void
+{
+    if (stack.size() < 2) {
+        throw std::logic_error{"not enough operands for %"};
+    }
+    auto const b = (int) pop_top(stack);
+    auto const a = (int) pop_top(stack);
+    stack.push(a % b);
+}
+
+auto evaluate_exponentiation(std::stack<double>& stack) -> void
+{
+    if (stack.size() < 2) {
+        throw std::logic_error{"not enough operands for **"};
+    }
+    auto const b = pop_top(stack);
+    auto const a = pop_top(stack);
+    stack.push(pow(a, b));
+}
+
+auto evaluate_square_root(std::stack<double>& stack) -> void
+{
+    if (stack.size() < 1) {
+        throw std::logic_error{"not enough operands for sqrt"};
+    }
+    auto const a = pop_top(stack);
+    stack.push(sqrt(a));
+}
+
+auto evaluate_factorial(std::stack<double>& stack) -> void
+{
+    if (stack.size() < 1) {
+        throw std::logic_error{"not enough operands for /"};
+    }
+    auto const a = (int) pop_top(stack);
+
+	int factorial;
+	if (a >= 0) {
+		factorial = 1;
+		for(int i = 1; i <= a; ++i) {
+			factorial *= i;
 		}
 	}
+    stack.push(factorial);
 }
 
-int main(int argc, char *argv[]) {
+
+auto make_args(int argc, char* argv[]) -> std::vector<std::string>
+{
+    auto args = std::vector<std::string>{};
+    std::copy_n(argv, argc, std::back_inserter(args));
+    return args;
+}
+
+auto main(int argc, char* argv[]) -> int
+{
 	if(argc < 4) {
 		std :: cout << "pass 3 arguments, two numbers and operation\n\n" << 
 		"+ sum\n" << 
@@ -84,35 +143,38 @@ int main(int argc, char *argv[]) {
 		"sample: \"./s04-rpn-calculator 5 10 +\"\n";
 		return 0;
 	}
+    auto const args = make_args(argc - 1, argv + 1);
 
-	int first;
-	int second;
-	std::string operation;
+    auto stack = std::stack<double>{};
+    for (auto const each : args) {
+        try {
+            if (each == "p") {
+                std::cout << pop_top(stack) << "\n";
+            } else if (each == "+") {
+                evaluate_addition(stack);
+            } else if (each == "-") {
+                evaluate_subtraction(stack);
+            } else if (each == "*") {
+                evaluate_multiplication(stack);
+            } else if (each == "/") {
+                evaluate_division(stack);
+            } else if (each == "//") {
+                evaluate_division_whole(stack);
+            } else if (each == "%") {
+                evaluate_remainder(stack);
+            } else if (each == "**") {
+                evaluate_exponentiation(stack);
+            } else if (each == "sqrt") {
+                evaluate_square_root(stack);
+            } else if (each == "!") {
+                evaluate_factorial(stack);
+            } else {
+                stack.push(std::stod(each));
+            }
+        } catch (std::logic_error const& e) {
+            std::cerr << "error: " << each << ": " << e.what() << "\n";
+        }
+    }
 
-	if(is_number(argv[1]) && 
-		is_number(argv[2]) && 
-		is_operation(argv[3])) {
-			first = std::__cxx11::stoi(argv[1]);
-			second = std::__cxx11::stoi(argv[2]);
-			operation = std::string(argv[3]);
-	} else {
-		std::cout << "Incorrect arguments.\n";
-		return 0;
-	}
-
-	calculate_and_print(first, second, operation);
-	return 0;
+    return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
