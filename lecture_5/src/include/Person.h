@@ -10,3 +10,9 @@ class Person {
 		: name(name_val), surname(surname_val) {};
 };
 
+class Greeting {
+	public:
+	virtual std::string greet(Person& person) = 0;
+	Greeting() {};
+};
+
