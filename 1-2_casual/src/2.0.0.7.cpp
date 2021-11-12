@@ -14,12 +14,16 @@ int main(int argc, char *argv[]) {
 	auto limit = getInteger();
 	std::cout << "\nEnter divider: ";
 	auto divider = getInteger();
-	std::cout << "\n";
+	std::cout << "\n0";
 
-	for (int n = 0; n <= limit; n++) {
-		if(n % divider == 0) std::cout << n << " ";
+	int sum = 0;
+	for (int n = 1; n <= limit; n++) {
+		if(n % divider == 0) {
+			std::cout << " + " << n;
+			sum += n;
+		}
 	}
 
-	std::cout << "\n";
+	std::cout << " = " << sum << "\n";
 	return 0;
 }
