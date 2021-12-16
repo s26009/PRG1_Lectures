@@ -5,7 +5,6 @@
 #include <termios.h>
 #include <stropts.h>
 #include <stdio.h>
-#include <iterator>
 
 /// Debug mode
 bool debug = false;
