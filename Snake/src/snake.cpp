@@ -176,7 +176,8 @@ void print_array_frame(void) {
 		std::cout << "food[" << food[0] << "][" << food[1] << "]\n";
 		std::cout << "snake[" << snake[0][0] << "][" << snake[0][1] 
 			<< "] = " << background[snake[0][0]][snake[0][1]] << "\n";
-		std::cout << read_s << "Wrong input: " << garbage_input << '\n';
+		std::cout << "Wrong input: " << garbage_input << '\n';
+		std::cout << "Total inputs: " << garbage_input << '\n';
 	}
 }
 
