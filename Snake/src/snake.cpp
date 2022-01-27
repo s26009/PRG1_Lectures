@@ -8,23 +8,24 @@
 
 /// Debug mode
 bool debug = false;
+bool was = false;
 std::string garbage_input = "";
 /// dimensions
-const int width = 25;                      
-const int height = 25;                      
-const char border_char ='*';                      
-const char block ='#';                      
-const char* clearcommand = "clear";        
+const int width = 25;
+const int height = 25;
+const char border_char ='*';
+const char block ='#';
+const char* clearcommand = "clear";
 
 int read_s = 0;
 /// global arrays for Data Records
-int background[height][width];  
-int snake[50][2];               
-int food[2]={0,0};              
-int score = 0;                  
-int snakelen = 3;               
-int speed = 1;   
-int lap = 190;                    
+int background[height][width];
+int snake[150][2];
+int food[2]={0,0};
+int score = 0;
+int snakelen = 3;
+int speed = 1;
+int lap = 190;
 
 /// temporary variables
 int bytesWaiting, i;
@@ -32,8 +33,8 @@ int px,py,nx, ny;
 char k;
 int h,w;
 int x,y;
-int movementx = 0;            
-int movementy = -speed;                
+int movementx = 0;
+int movementy = -speed;
 
 
 int _kbhit() {
@@ -172,11 +173,33 @@ void print_array_frame(void) {
 			}
 		}
 		std::cout << '\n';
+		std::cout << " was = " << was;
 		std::cout << "food[" << food[0] << "][" << food[1] << "]\n";
 		std::cout << "snake[" << snake[0][0] << "][" << snake[0][1] 
 			<< "] = " << background[snake[0][0]][snake[0][1]] << "\n";
 		std::cout << "Wrong input: " << garbage_input << '\n';
 		std::cout << "Total inputs: " << garbage_input << '\n';
+		std::cout << "const int width = 25;" << width << std::endl;
+		std::cout << "const int height = 25;" << height << std::endl;
+		std::cout << "const char border_char ='*';" << border_char << std::endl;
+		std::cout << "const char block ='#';" << block << std::endl;
+		std::cout << "const char* clearcommand =;" << clearcommand<< std::endl;
+
+		std::cout << "int read_s = 0;" << read_s << std::endl;
+		/// global arrays for Data Records
+		std::cout << "int score = 0;" << score << std::endl;
+		std::cout << "int snakelen = 3;" << snakelen << std::endl;
+		std::cout << "int speed = 1;" << speed << std::endl;
+		std::cout << "int lap = 190;" << lap << std::endl;
+
+		/// temporary variables
+		std::cout << "int bytesWaiting, i;" << bytesWaiting << "," << i << std::endl;
+		std::cout << "int px,py,nx, ny;" << px  << " " << py << " " << nx << " " << ny << std::endl;
+		std::cout << "char k;" << k << std::endl;
+		std::cout << "int h,w;" << h << " " << w << std::endl;
+		std::cout << "int x,y;" << x << " " << y << std::endl;
+		std::cout << "int movementx = 0;" << movementx << std::endl;
+		std::cout << "int movementy = -speed;" << movementy << std::endl;
 	}
 }
 
@@ -207,7 +230,6 @@ void sleepcp(int milliseconds) {
 
 /// Reaction On Press Button Of Keyboard
 void reaction_on_keyboard(const char k){
-	
     if((k == 'd' || k == 'C' || k == '6') && movementx != -speed){
         // Right Turn
         movementx = speed;
@@ -293,13 +315,13 @@ void loop(void){
     int frame = 0;
     x = 0;
     y = 0;
-
-    while(x < 500){
+	cook_food();
+    while(1){
         if(_kbhit()) {
         	std::cin >> k; //arrow - 3 iterations
 			if (k == '^' || k == '[' || k == '') {
 				std::cin >> k;
-				continue; 
+				continue;
 			}
 			read_s++;
 			reaction_on_keyboard(k);
@@ -307,9 +329,8 @@ void loop(void){
         sleepcp(lap);
         update_snake_coordination();
         mainloop();
-        check_over_lapping();       
-        cook_food();                
-        capture_food();   
+        check_over_lapping();
+        capture_food();
 		std::string spaces(width - 15, ' ');
         std::cout << spaces << "< Frame : " << frame << "  | Score  : " << score << " > "<< std::endl;
         frame++;
@@ -325,5 +346,6 @@ int main(int argc, char* argv[]){
 	}
     initialise_background();
     initialise_snake();
+
     loop();
 }
